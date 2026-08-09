@@ -1,0 +1,9 @@
+// Build and run the bl-raylib example.
+main :: fn () s32 {
+    exe :: add_executable("example");
+    // Resolve #import "extra/raylib" from this checkout before the global API.
+    set_module_dir(exe, ".");
+    add_unit(exe, "examples/basic.bl");
+    compile(exe);
+    return 0;
+}

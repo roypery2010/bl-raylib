@@ -1,0 +1,2 @@
+# Compatibility pointer: the canonical Biscuit module lives in extra/raylib/.
+# Install extra/raylib/ as <bl-install>/lib/bl/api/extra/raylib.

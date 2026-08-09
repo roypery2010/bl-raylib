@@ -1,0 +1,14 @@
+# raylib bindings for Biscuit Language
+version: 20260809
+supported: "x86_64-pc-windows-msvc, x86_64-pc-linux-gnu, x86_64-unknown-linux-gnu, x86_64-apple-darwin, arm64-apple-darwin"
+src: "raylib.bl"
+x86_64-pc-windows-msvc:
+  linker_opt: "raylib.lib opengl32.lib gdi32.lib winmm.lib"
+x86_64-pc-linux-gnu:
+  linker_opt: "-lraylib -lGL -lm -lpthread -ldl -lrt -lX11"
+x86_64-unknown-linux-gnu:
+  linker_opt: "-lraylib -lGL -lm -lpthread -ldl -lrt -lX11"
+x86_64-apple-darwin:
+  linker_opt: "-lraylib -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo"
+arm64-apple-darwin:
+  linker_opt: "-lraylib -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo"

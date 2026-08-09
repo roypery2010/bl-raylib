@@ -1,0 +1,13 @@
+tmp/
+build/
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+example
+example.exe
+basic
+basic.exe

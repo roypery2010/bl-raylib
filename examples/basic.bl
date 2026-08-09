@@ -1,0 +1,22 @@
+#import "std/string"
+raylib :: #import "extra/raylib";
+
+main :: fn () s32 {
+    raylib.SetConfigFlags(raylib.FLAG_WINDOW_RESIZABLE);
+    raylib.InitWindow(960, 540, strtoc("bl-raylib example"));
+    defer raylib.CloseWindow();
+    raylib.SetTargetFPS(60);
+
+    loop !raylib.WindowShouldClose() {
+        raylib.BeginDrawing();
+        raylib.ClearBackground(raylib.RAYWHITE);
+        raylib.DrawText(strtoc("bl-raylib"), 40, 36, 40, raylib.DARKGRAY);
+        raylib.DrawText(strtoc("BiscuitLang + raylib"), 44, 86, 20, raylib.GRAY);
+        raylib.DrawRectangle(40, 140, 260, 120, raylib.BLUE);
+        raylib.DrawCircle(470, 200, 60.0f, raylib.ORANGE);
+        raylib.DrawRectangleLines(40, 300, 260, 90, raylib.DARKGRAY);
+        raylib.DrawText(strtoc("Press ESC to close"), 58, 332, 20, raylib.DARKGRAY);
+        raylib.EndDrawing();
+    }
+    return 0;
+}

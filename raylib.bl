@@ -1,0 +1,2 @@
+// Compatibility note: the canonical bl-raylib source is extra/raylib/raylib.bl.
+// Biscuit resolves the installed module as #import "extra/raylib".
