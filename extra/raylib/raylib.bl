@@ -190,6 +190,7 @@ SetTargetFPS :: fn (fps: s32) #extern;
 GetFPS :: fn () s32 #extern;
 GetFrameTime :: fn () f32 #extern;
 GetTime :: fn () f64 #extern;
+GetColor :: fn (hexValue: u32) Color #extern;
 
 BeginDrawing :: fn () #extern;
 EndDrawing :: fn () #extern;
