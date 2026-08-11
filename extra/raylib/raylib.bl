@@ -173,6 +173,40 @@ width: f32;
 height: f32;
 };
 
+// Audio data and stream types. The raw pointers mirror raylib's void* and
+// internal opaque audio pointers while preserving the C ABI layout.
+Wave :: struct {
+frameCount: u32;
+sampleRate: u32;
+sampleSize: u32;
+channels: u32;
+data: *u8;
+};
+
+AudioStream :: struct {
+buffer: *u8;
+processor: *u8;
+sampleRate: u32;
+sampleSize: u32;
+channels: u32;
+};
+
+Sound :: struct {
+stream: AudioStream;
+frameCount: u32;
+};
+
+Music :: struct {
+stream: AudioStream;
+frameCount: u32;
+looping: bool;
+ctxType: s32;
+ctxData: *u8;
+};
+
+// AudioCallback receives a writable audio buffer and the number of frames.
+AudioCallback :: *fn (bufferData: *u8, frames: u32);
+
 InitWindow :: fn (width: s32, height: s32, title: *s8) #extern;
 CloseWindow :: fn () #extern;
 WindowShouldClose :: fn () bool #extern;
@@ -224,6 +258,82 @@ GetMouseWheelMove :: fn () f32 #extern;
 SetExitKey :: fn (key: s32) #extern;
 WaitTime :: fn (seconds: f64) #extern;
 SetTraceLogLevel :: fn (logLevel: s32) #extern;
+
+// Audio device management.
+InitAudioDevice :: fn () #extern;
+CloseAudioDevice :: fn () #extern;
+IsAudioDeviceReady :: fn () bool #extern;
+SetMasterVolume :: fn (volume: f32) #extern;
+GetMasterVolume :: fn () f32 #extern;
+
+// Wave loading, conversion, export, and sample access.
+LoadWave :: fn (fileName: *s8) Wave #extern;
+LoadWaveFromMemory :: fn (fileType: *s8, fileData: *u8, dataSize: s32) Wave #extern;
+IsWaveValid :: fn (wave: Wave) bool #extern;
+UnloadWave :: fn (wave: Wave) #extern;
+ExportWave :: fn (wave: Wave, fileName: *s8) bool #extern;
+ExportWaveAsCode :: fn (wave: Wave, fileName: *s8) bool #extern;
+WaveCopy :: fn (wave: Wave) Wave #extern;
+WaveCrop :: fn (wave: *Wave, initFrame: s32, finalFrame: s32) #extern;
+WaveFormat :: fn (wave: *Wave, sampleRate: s32, sampleSize: s32, channels: s32) #extern;
+LoadWaveSamples :: fn (wave: Wave) *f32 #extern;
+UnloadWaveSamples :: fn (samples: *f32) #extern;
+
+// Sound loading, playback, aliases, and controls.
+LoadSound :: fn (fileName: *s8) Sound #extern;
+LoadSoundFromWave :: fn (wave: Wave) Sound #extern;
+LoadSoundAlias :: fn (source: Sound) Sound #extern;
+IsSoundValid :: fn (sound: Sound) bool #extern;
+UpdateSound :: fn (sound: Sound, data: *u8, frameCount: s32) #extern;
+UnloadSound :: fn (sound: Sound) #extern;
+UnloadSoundAlias :: fn (alias: Sound) #extern;
+PlaySound :: fn (sound: Sound) #extern;
+StopSound :: fn (sound: Sound) #extern;
+PauseSound :: fn (sound: Sound) #extern;
+ResumeSound :: fn (sound: Sound) #extern;
+IsSoundPlaying :: fn (sound: Sound) bool #extern;
+SetSoundVolume :: fn (sound: Sound, volume: f32) #extern;
+SetSoundPitch :: fn (sound: Sound, pitch: f32) #extern;
+SetSoundPan :: fn (sound: Sound, pan: f32) #extern;
+
+// Music streaming, playback, seeking, and controls.
+LoadMusicStream :: fn (fileName: *s8) Music #extern;
+LoadMusicStreamFromMemory :: fn (fileType: *s8, data: *u8, dataSize: s32) Music #extern;
+IsMusicValid :: fn (music: Music) bool #extern;
+UnloadMusicStream :: fn (music: Music) #extern;
+PlayMusicStream :: fn (music: Music) #extern;
+IsMusicStreamPlaying :: fn (music: Music) bool #extern;
+UpdateMusicStream :: fn (music: Music) #extern;
+StopMusicStream :: fn (music: Music) #extern;
+PauseMusicStream :: fn (music: Music) #extern;
+ResumeMusicStream :: fn (music: Music) #extern;
+SeekMusicStream :: fn (music: Music, position: f32) #extern;
+SetMusicVolume :: fn (music: Music, volume: f32) #extern;
+SetMusicPitch :: fn (music: Music, pitch: f32) #extern;
+SetMusicPan :: fn (music: Music, pan: f32) #extern;
+GetMusicTimeLength :: fn (music: Music) f32 #extern;
+GetMusicTimePlayed :: fn (music: Music) f32 #extern;
+
+// Raw audio stream management and processing callbacks.
+LoadAudioStream :: fn (sampleRate: u32, sampleSize: u32, channels: u32) AudioStream #extern;
+IsAudioStreamValid :: fn (stream: AudioStream) bool #extern;
+UnloadAudioStream :: fn (stream: AudioStream) #extern;
+UpdateAudioStream :: fn (stream: AudioStream, data: *u8, frameCount: s32) #extern;
+IsAudioStreamProcessed :: fn (stream: AudioStream) bool #extern;
+PlayAudioStream :: fn (stream: AudioStream) #extern;
+PauseAudioStream :: fn (stream: AudioStream) #extern;
+ResumeAudioStream :: fn (stream: AudioStream) #extern;
+IsAudioStreamPlaying :: fn (stream: AudioStream) bool #extern;
+StopAudioStream :: fn (stream: AudioStream) #extern;
+SetAudioStreamVolume :: fn (stream: AudioStream, volume: f32) #extern;
+SetAudioStreamPitch :: fn (stream: AudioStream, pitch: f32) #extern;
+SetAudioStreamPan :: fn (stream: AudioStream, pan: f32) #extern;
+SetAudioStreamBufferSizeDefault :: fn (size: s32) #extern;
+SetAudioStreamCallback :: fn (stream: AudioStream, callback: AudioCallback) #extern;
+AttachAudioStreamProcessor :: fn (stream: AudioStream, processor: AudioCallback) #extern;
+DetachAudioStreamProcessor :: fn (stream: AudioStream, processor: AudioCallback) #extern;
+AttachAudioMixedProcessor :: fn (processor: AudioCallback) #extern;
+DetachAudioMixedProcessor :: fn (processor: AudioCallback) #extern;
 
 // Raylib log levels.
 LOG_ALL :: 0;

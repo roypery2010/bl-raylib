@@ -3,8 +3,8 @@
 Raylib 5.x–6.x bindings for the [Biscuit Language](https://biscuitlang.org/). Tested with Biscuit 0.15.0 and raylib 6.0.0.
 
 This module follows Biscuit's `lib/bl/api/extra` module convention. It exposes
-raylib's C ABI directly through `#extern`, with a small, practical starting API
-for windows, timing, 2D drawing, keyboard, mouse, colors, and basic geometry.
+raylib's C ABI directly through `#extern`, including windows, timing, 2D drawing,
+keyboard, mouse, colors, basic geometry, and the complete public audio API.
 
 ## Requirements
 
@@ -70,6 +70,35 @@ Run that command from the repository root. Biscuit's build pipeline discovers
 `build.bl` in the current directory, and the local module manifest supplies the
 raylib linker configuration.
 
+## Audio
+
+The binding includes raylib's audio device, wave, sound, music, and raw audio
+stream APIs, including validity checks, memory loading, wave conversion/export,
+sound aliases, playback controls, stream callbacks, and stream/mixer processors.
+Audio data types mirror raylib's C layouts:
+
+```bl
+raylib.InitAudioDevice();
+sound := raylib.LoadSound(strtoc("sound.wav"));
+if raylib.IsSoundValid(sound) {
+    raylib.SetSoundVolume(sound, 0.8f);
+    raylib.PlaySound(sound);
+    loop raylib.IsSoundPlaying(sound) {
+        raylib.WaitTime(0.01);
+    }
+    raylib.UnloadSound(sound);
+}
+raylib.CloseAudioDevice();
+```
+
+`Wave.data`, `Music.ctxData`, `AudioStream.buffer`, and
+`AudioStream.processor` use `*u8` as raw/opaque pointers. `AudioCallback` is
+declared as `*fn (bufferData: *u8, frames: u32)` for stream and mixer callback
+registration. Callback functions must follow that signature and obey raylib's
+audio-thread safety requirements; callback registration is an advanced FFI use
+case and should be checked against the compiler's function-pointer conversion
+rules.
+
 ## Platform notes
 
 - Linux links `raylib`, OpenGL, X11, and the usual system libraries.
@@ -89,5 +118,7 @@ raylib's C `char *`; call `strtoc` for string literals so they are
 NUL-terminated before crossing the FFI boundary. Raylib boolean results use Biscuit's `bool` type, matching raylib's C `bool`
 return values and allowing them to be used directly in conditions.
 
-This is an initial binding, not a generated copy of all raylib headers. More
-raylib subsystems can be added without changing the module layout.
+This binding is not a generated copy of all raylib headers, but the public
+raylib audio API is included alongside the initial window, drawing, input, and
+geometry surface. More raylib subsystems can be added without changing the
+module layout.
